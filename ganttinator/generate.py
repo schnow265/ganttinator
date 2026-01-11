@@ -166,7 +166,7 @@ def generate_plantuml(
             if not task.start_date and not task.end_date:
                 # Only use milestone date if it exists
                 if milestone in milestones_with_dates:
-                    lines.append(f"[{safe_title}] happens at {milestones_with_dates[milestone]}")
+                    logger.warning(f"Skipping Task '{task.title}' because of missing start and end date.")
 
             # Apply color based on assignees
             color = get_task_color(task, person_colors, group_colors, groups_dict)
@@ -183,13 +183,14 @@ def generate_plantuml(
 
             for task in milestone_tasks:
                 safe_title = escape_plantuml_text(task.title)
-
+                
                 if task.start_date:
                     lines.append(f"[{safe_title}] starts {task.start_date}")
 
                 if task.end_date:
                     lines.append(f"[{safe_title}] ends {task.end_date}")
                 elif task.start_date:
+                    logger.warning(f"'{task.title}' does NOT have an end date - setting length to 1 day.")
                     lines.append(f"[{safe_title}] lasts 1 days")
 
                 # Apply color based on assignees
@@ -211,6 +212,7 @@ def generate_plantuml(
             if task.end_date:
                 lines.append(f"[{safe_title}] ends {task.end_date}")
             elif task.start_date:
+                logger.warning(f"'{task.title}' does NOT have an end date - setting length to 1 day.")
                 lines.append(f"[{safe_title}] lasts 1 days")
 
             # Apply color based on assignees

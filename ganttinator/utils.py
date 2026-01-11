@@ -54,11 +54,12 @@ def read_tsv_file(filepath: Path) -> list[Task]:
     """Read TSV file and return list of tasks."""
     tasks: list[Task] = []
 
+    logger.debug(f"Reading TSV file '{filepath.absolute()}'")
     with Path(filepath).open("r", encoding="utf-8") as f:
         reader = csv.DictReader(f, delimiter="\t")
 
         if not reader.fieldnames:
-            console.print("[red]Error: TSV file is empty[/red]")
+            logger.error("TSV file is empty")
             sys.exit(1)
 
         required_columns = {
@@ -72,7 +73,7 @@ def read_tsv_file(filepath: Path) -> list[Task]:
         missing_columns = required_columns - set(reader.fieldnames)
 
         if missing_columns:
-            console.print(f"[red]Error: Missing required columns: {missing_columns}[/red]")
+            logger.error(f"Missing required columns: {missing_columns}")
             sys.exit(1)
 
         for row_num, row in enumerate(reader, start=2):
@@ -84,14 +85,23 @@ def read_tsv_file(filepath: Path) -> list[Task]:
             milestone = row["Milestone"].strip()
 
             if not title:
-                console.print(f"[yellow]Warning: Row {row_num} has empty title[/yellow]")
+                logger.warning(f"Row {row_num} has empty title")
                 continue
+            
+            if not assignees:
+                logger.warning(f"Row {row_num} ('{title}') has no assignee.")
+
+            if not start_date:
+                logger.warning(f"Row {row_num} ('{title}') has no start date.")
+
+            if not start_date:
+                logger.warning(f"Row {row_num} ('{title}') has no end date.")
 
             # Parse and validate start date
             if start_date:
                 parsed_start = parse_date(start_date)
                 if parsed_start is None:
-                    console.print(f"[yellow]Warning: Row {row_num} has invalid start date:   {start_date}[/yellow]")
+                    logger.warning(f"Row {row_num} has invalid start date: '{start_date}'")
                     start_date = ""
                 else:
                     start_date = parsed_start
@@ -100,7 +110,7 @@ def read_tsv_file(filepath: Path) -> list[Task]:
             if end_date:
                 parsed_end = parse_date(end_date)
                 if parsed_end is None:
-                    console.print(f"[yellow]Warning: Row {row_num} has invalid end date:   {end_date}[/yellow]")
+                    logger.warning(f"Row {row_num} has invalid end date: '{end_date}'")
                     end_date = ""
                 else:
                     end_date = parsed_end
