@@ -1,7 +1,7 @@
 [project]
 name = "ganttinator"
 version = "0.1.0"
-description = "Add your description here"
+description = "Ever had to provide a Gantt chart, but you wanted to do it differently? Well, now you can!"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -14,3 +14,81 @@ dependencies = [
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.14.11",
+]
+
+[project.scripts]
+ganttinator = "ganttinator.main:main"
+
+[tool.ruff]
+cache-dir = "~/.cache/ruff"
+extend-exclude = [".venv"]
+line-length = 320
+
+[tool.ruff.format]
+preview = true
+
+[tool.ruff.lint]
+preview = true
+ignore = [
+    "S404", # i know. I am aware.
+    "COM812", # formatter conflict. and who uses this?
+]
+
+extend-select = [
+    "A",
+    "ANN",
+    "ARG",
+    "ASYNC",
+    "B",
+    "BLE",
+    "C4",
+    "C90",
+    "COM",
+    "E",
+    "EM",
+    "ERA",
+    "F",
+    "FA",
+    "FBT",
+    "FIX",
+    "FLY",
+    "FURB",
+    "I",
+    "ICN",
+    "INT",
+    "N",
+    "NPY",
+    "PERF",
+    "PGH",
+    "PIE",
+    "PL",
+    "PLC",
+    "PLE",
+    "PLR",
+    "PLW",
+    "PTH",
+    "PYI",
+    "Q",
+    "RET",
+    "RSE",
+    "RUF",
+    "SIM",
+    "SLF",
+    "SLOT",
+    "T20",
+    "TC",
+    "TD",
+    "TID",
+    "TRY",
+    "UP",
+    "W",
+    "YTT",
+]
+
+[tool.ruff.lint.pylint]
+max-positional-args = 6
+max-args = 6
