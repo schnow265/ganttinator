@@ -1,5 +1,7 @@
 # ganntinator
 
+Please note that this is **not production ready**!
+
 > Ever had to provide a Gantt chart, but you wanted to do it differently? Well, now you can!
 
 Introducing: The Ganntinator!
