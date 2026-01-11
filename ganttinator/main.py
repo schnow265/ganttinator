@@ -1,3 +1,4 @@
+import logging
 import sys
 import uuid
 from collections import Counter
@@ -5,6 +6,7 @@ from pathlib import Path
 
 import click
 from rich.console import Console
+from rich.logging import RichHandler
 from rich.prompt import Prompt
 from rich.table import Table
 
@@ -14,7 +16,14 @@ from ganttinator.generate import generate_plantuml
 from ganttinator.task import Task
 from ganttinator.utils import parse_date, read_tsv_file
 
+FORMAT = "%(message)s"
+logging.basicConfig(
+    level="NOTSET", format=FORMAT, datefmt="[%X]", handlers=[RichHandler()]
+)
+
 console = Console()
+logger = logging.getLogger(__name__)
+
 
 def detect_assignee_groups(tasks: list[Task], min_occurrences: int = 2) -> list[tuple[str, ...]]:
     """Detect groups of people who are frequently assigned together."""
@@ -143,19 +152,6 @@ def prompt_header_footer_legend() -> tuple[str, str, str]:
     return header.strip(), footer.strip(), legend_title.strip()
 
 
-
-def find_earliest_task_date(tasks: list[Task]) -> str | None:
-    """Find the earliest date among all tasks."""
-    dates = []
-    for task in tasks:
-        if task.start_date:
-            dates.append(task.start_date)
-        if task.end_date:
-            dates.append(task.end_date)
-
-    return min(dates) if dates else None
-
-
 @click.command()
 @click.option(
     "--input-tsv",
@@ -256,7 +252,7 @@ def main(
     table.add_column("End Date", style="green")
     table.add_column("Milestone", style="yellow")
 
-    for task in tasks[:10]:
+    for task in tasks:
         table.add_row(
             task.title,
             task.assignees,
@@ -264,9 +260,6 @@ def main(
             task.end_date,
             task.milestone,
         )
-
-    if len(tasks) > 10:
-        table.add_row("...", "...", "...", "...", "...")
 
     console.print(table)
     console.print()

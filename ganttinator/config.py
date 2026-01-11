@@ -1,12 +1,15 @@
+import logging
 from pathlib import Path
+
 import tomli
 import tomli_w
-
 from rich.console import Console
 
 from ganttinator.task import Task
 
 console = Console()
+logger = logging.getLogger(__name__)
+
 
 def create_toml_config(
     tasks: list[Task],

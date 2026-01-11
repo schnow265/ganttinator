@@ -1,13 +1,16 @@
+import csv
+import logging
+import sys
 from datetime import datetime
 from pathlib import Path
-import sys
-
-from ganttinator.task import Task
-import csv
 
 from rich.console import Console
 
+from ganttinator.task import Task
+
 console = Console()
+logger = logging.getLogger(__name__)
+
 
 def parse_date(date_str: str) -> str | None:
     """Parse date from 'Jan 8, 2026' or 'YYYY-MM-DD' format to 'YYYY-MM-DD'."""
@@ -105,3 +108,15 @@ def read_tsv_file(filepath: Path) -> list[Task]:
             tasks.append(Task(title, url, assignees, start_date, end_date, milestone))
 
     return tasks
+
+
+def find_earliest_task_date(tasks: list[Task]) -> str | None:
+    """Find the earliest date among all tasks."""
+    dates = []
+    for task in tasks:
+        if task.start_date:
+            dates.append(task.start_date)
+        if task.end_date:
+            dates.append(task.end_date)
+
+    return min(dates) if dates else None

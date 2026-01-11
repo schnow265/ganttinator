@@ -1,4 +1,3 @@
-
 class Task:
     """Represents a task from the TSV file."""
 
